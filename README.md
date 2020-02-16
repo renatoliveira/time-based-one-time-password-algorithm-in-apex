@@ -6,5 +6,4 @@ A work in progress 😜
 
 TODO:
 
-1. Fix the usage of bytes since Apex's Blob uses the ASCII values.
-2. [Key URI](https://github.com/google/google-authenticator/wiki/Key-Uri-Format)
+1. [Key URI](https://github.com/google/google-authenticator/wiki/Key-Uri-Format)
