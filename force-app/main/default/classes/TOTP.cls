@@ -218,4 +218,36 @@ public class TOTP {
             return this.hex;
         }
     }
+
+    public class KeyURI {
+        // Secret keys may be encoded in QR Codes as a URI with a specific format:
+        // otpauth://TYPE/LABEL?PARAMETERS
+        // As seen at https://github.com/google/google-authenticator/wiki/Key-Uri-Format
+
+        private String key;             // Shared key
+        private String type_x = 'totp'; // Default to 'totp' for this code
+        private String accountName;     // such as user@service.com
+        private String issuer;          // Company
+        private Integer period = 30;    // defaults to 30 seconds
+        private Integer digits = 6;     // defaults to six digits
+        private String algorithm = 'SHA1';
+
+        public KeyURI(String key, String accountName, String issuer) {
+            this.key = key;
+            this.accountName = accountName;
+            this.issuer = issuer;
+        }
+
+        public String getURL() {
+            return String.format('otpauth://{0}/{1}:{2}?secret={3}&issuer={1}&algorithm={4}&period={5}&digits={6}', new List<String>{
+                this.type_x,
+                this.issuer,
+                this.accountName,
+                this.key,
+                this.algorithm,
+                this.period+'',
+                this.digits+''
+            });
+        }
+    }
 }
