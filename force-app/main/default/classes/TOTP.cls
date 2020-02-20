@@ -73,7 +73,7 @@ public class TOTP {
             timeStamp -= mod;
         }
 
-        Long step = timeStamp / 30;
+        Long step = timeStamp / 30 / 1000;
 
         for (Integer i = 0 - genSteps; i <= genSteps; i++) {
 
@@ -100,83 +100,99 @@ public class TOTP {
         return byteArray;
     }
 
-    public Static String ConvertStringToBase32String(String text){
-        String converted = EncodingUtil.convertToHex(Blob.valueOf(text));
-		String[] parts = converted.split('');
+    public static String convertStringToBase32String(String text) {
+        String hex = EncodingUtil.convertToHex(Blob.valueOf(text));
+		String[] parts = hex.split('');
+
         Map<Integer,List<String>> binaryListString = new Map<Integer,List<String>>();
         Integer count = 0;
-        for(String part : parts){
-            binaryListString.put(count,ConvertIntegerToBinaryString(hexToInt(part),4));
-            system.debug(ConvertIntegerToBinaryString(hexToInt(part),4));
+
+        for (String part : parts) {
+            binaryListString.put(count,convertIntegerToBinaryString(hexToInt(part),4));
             count++;
-        }        
-        Map<Integer,List<String>> map5Bit = convert4BitTo5Bit(binaryListString);
-        return convertMap5BitsToListInteger(map5Bit,binaryListString);       
+        }
+
+        Map<Integer,List<String>> map5bit = convert4BitTo5Bit(binaryListString);
+
+        return convertMap5BitsToListInteger(map5bit,binaryListString);
     }
 
-    public Static List<String> ConvertIntegerToBinaryString (Integer numberInteger, Integer numeroCasas){
+    public static List<String> convertIntegerToBinaryString(Integer int, Integer places) {
         List<String> binaryNumber = new List<String>();
-        while(numberInteger > 1){
-            binaryNumber.add(String.valueOf(math.mod(numberInteger, 2)));
-            numberInteger = numberInteger /2;
+
+        while (int > 1) {
+            binaryNumber.add(String.valueOf(Math.mod(int, 2)));
+            int = int /2;
         }
-		binaryNumber.add(String.valueOf(numberInteger));
-		binaryNumber = reverseBinaryString(binaryNumber,numeroCasas);     
-        return binaryNumber;          
+
+        binaryNumber.add(String.valueOf(int));
+
+        binaryNumber = reverseBinaryString(binaryNumber, places);
+
+        return binaryNumber;
     }
 
-    public Static List<String> reverseBinaryString(List<String> toReverse, Integer size){
-        List<String> reverted = new List<String>();
-        for(Integer i =0; i < size - toReverse.size(); i++){
-            reverted.add('0');
+    public static List<String> reverseBinaryString(List<String> bin, Integer size) {
+        List<String> reversed = new List<String>();
+
+        for (Integer i =0; i < size - bin.size(); i++) {
+            reversed.add('0');
         }
-        for(Integer i =1; i <= toReverse.size(); i++){
-           reverted.add(toReverse[toReverse.size() - i]);
+
+        for (Integer i =1; i <= bin.size(); i++) {
+           reversed.add(bin[bin.size() - i]);
         }
-        
-        return reverted;
+
+        return reversed;
     }
 
     public static final List<String> hex = '0123456789abcdef'.split('');
-    
+
     public static Integer hexToInt(String str) {
-        str = str.toLowerCase();
-        String[] hexValue = str.split('');
+        String[] hexList = str.toLowerCase().split('');
         Integer retVal = 0;
-        for(Integer i = 0; i < hexValue.size(); i++) {
-            retVal = (retVal << 4) + hex.indexOf(hexValue[i]);
+
+        for (Integer i = 0; i < hexList.size(); i++) {
+            retVal = (retVal << 4) + hex.indexOf(hexList[i]);
         }
+
         return retVal;
     }
 
-    public Static Map<Integer,List<String>> convert4BitTo5Bit(Map<Integer,List<String>> map4Bit){
+    public static Map<Integer,List<String>> convert4BitTo5Bit(Map<Integer,List<String>> fourBit) {
         Map<Integer,List<String>> map5bit = new Map<Integer,List<String>>();
+
         Integer sizeMap4Bit = Map4Bit.keySet().size();
+
         Integer count5 = 0;
-        Integer count4 =0;
-        while(count4 < sizeMap4Bit){
-            List<String> aux1 = map4Bit.get(count4);
+        Integer count4 = 0;
+
+        while (count4 < sizeMap4Bit) {
+
+            List<String> aux1 = fourBit.get(count4);
+
             List<String> aux2 = new List<String> {'0','0','0','0'};
             List<String> aux3 = new List<String> {'0','0','0','0'};
             List<String> aux4 = new List<String> {'0','0','0','0'};
             List<String> aux5 = new List<String> {'0','0','0','0'};
-                        
-            if(count4 + 1 < map4Bit.size()){
-                aux2 = map4Bit.get(count4 + 1);
+
+            if(count4 + 1 < fourBit.size()) {
+                aux2 = fourBit.get(count4 + 1);
             }
-            if(count4 + 2 < map4Bit.size()){
-                aux3 = map4Bit.get(count4 + 2);
+            if(count4 + 2 < fourBit.size()) {
+                aux3 = fourBit.get(count4 + 2);
             }
-            if(count4 + 3 < map4Bit.size()){
-                aux4 = map4Bit.get(count4 + 3);
+            if(count4 + 3 < fourBit.size()) {
+                aux4 = fourBit.get(count4 + 3);
             }
-            if(count4 + 4 < map4Bit.size()){
-                aux5 = map4Bit.get(count4 + 4);
+            if(count4 + 4 < fourBit.size()) {
+                aux5 = fourBit.get(count4 + 4);
             }
             List<String> aux6 = new List<String>();
             aux6.addAll(aux1);
             aux6.add(aux2[0]);
             map5bit.put(count5,aux6);
+
             List<String> aux7 = new List<String>();
             aux7.add(aux2[1]);
             aux7.add(aux2[2]);
@@ -184,6 +200,7 @@ public class TOTP {
             aux7.add(aux3[0]);
             aux7.add(aux3[1]);
             map5bit.put(count5 + 1,aux7);
+
             List<String> aux8 = new List<String>();
             aux8.add(aux3[2]);
             aux8.add(aux3[3]);
@@ -191,64 +208,67 @@ public class TOTP {
             aux8.add(aux4[1]);
             aux8.add(aux4[2]);
             map5bit.put(count5 + 2,aux8);
+
             List<String> aux9 = new List<String>();
             aux9.add(aux4[3]);
             aux9.addall(aux5);
             map5bit.put(count5 + 3,aux9);
-            count5 +=4;
-            count4 +=5;    
-        }
-        return map5bit;
-    }    
 
-    public Static String convertMap5BitsToListInteger(Map<Integer,List<String>> map5Bit, Map<Integer,List<String>> map4Bit){
-        String pad = '';
+            count5 +=4;
+            count4 +=5;
+        }
+
+        return map5bit;
+    }
+
+    public static String convertMap5BitsToListInteger(Map<Integer,List<String>> map5Bit, Map<Integer,List<String>> map4Bit) {
         Integer sizeMap4Bit = Map4Bit.keySet().size();
         Integer finalQuantum = math.mod(sizeMap4Bit*4, 40);
         Integer stringSize = (sizeMap4Bit*4 / 40) * 8;
-        if(finalQuantum == 8){
-            pad = '======';
-            stringSize +=2;
-        }
-        else if(finalQuantum == 16){
-            pad = '====';
-            stringSize +=4;
-        }
-		
-        else if(finalQuantum == 24){
-            pad = '===';
-            stringSize +=5;
-        }
-        else if(finalQuantum == 32){
-            pad = '=';
-            stringSize +=7;
-        }
-        
+        String pad = '';
         Integer countChars = 0;
         String base32String = '';
-        for(Integer i : map5Bit.keyset()){
-            if(countChars ==  stringSize) {
+
+        if (finalQuantum == 8) {
+            pad = '======';
+            stringSize += 2;
+        } else if(finalQuantum == 16) {
+            pad = '====';
+            stringSize += 4;
+        } else if(finalQuantum == 24) {
+            pad = '===';
+            stringSize += 5;
+        } else if(finalQuantum == 32) {
+            pad = '=';
+            stringSize += 7;
+        }
+
+        for (Integer i : map5Bit.keyset()) {
+            if (countChars ==  stringSize) {
                 break;
-            }    
-            base32String += IntTobase32(binaryToInteger(listBinaryToString(map5Bit.get(i),5)));
+            }
+            base32String += intToB32(binaryToInteger(binaryToString(map5Bit.get(i), 5)));
             countChars++;
         }
         return base32String + pad;
     }
 
-    public static String listBinaryToString(List<String> binaryList, Integer Size){
+    public static String binaryToString(List<String> binaryList, Integer Size) {
         String binaryString = '';
-        for(Integer i = 0 ; i< Size; i++){
+
+        for (Integer i = 0 ; i< Size; i++) {
             binaryString += binaryList[i];
         }
+
         return binaryString;
     }
 
     public static Integer binaryToInteger(String value) {
-    	Integer result;
-        if(value != null && value.containsOnly('01')) {
+        Integer result;
+
+        if (value != null && value.containsOnly('01')) {
             result = 0;
-            for(String s: value.split('')) {
+            for (String s: value.split('')) {
                 result = (result << 1) | (s == '1'? 1: 0);
             }
         }
@@ -256,8 +276,8 @@ public class TOTP {
     }
 
     public static final List<String> base32 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'.split('');
-    
-    public static String IntTobase32(Integer position) {
+
+    public static String intToB32(Integer position) {
         return base32[position];
     }
 
@@ -404,7 +424,7 @@ public class TOTP {
                 this.type_x,
                 this.issuer,
                 this.accountName,
-                this.key,
+                ConvertStringToBase32String(this.key),
                 this.algorithm,
                 this.period+'',
                 this.digits+''
