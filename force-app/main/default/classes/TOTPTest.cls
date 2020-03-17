@@ -69,4 +69,27 @@ public class TOTPTest {
         System.assertEquals(2, result.size(), '');
         System.assertEquals('94287082', result[1], '');
     }
+
+    @IsTest
+    static void test_URI() {
+        // The key "12345678901234567890" key is translated to
+        // "GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ" in base32
+        String key = '12345678901234567890';
+
+        String result = TOTP.convertUTF8toBase32(key);
+
+        System.assertEquals(
+            'GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ',
+            result,
+            'The result should be the key "GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ" in base 32.'
+        );
+
+        TOTP.KeyURI uri = new TOTP.KeyURI(key, 'Name', 'Issuer');
+        result = uri.getURL();
+
+        System.assert(
+            result.contains('GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ'),
+            'The generated URI must contain the base 32 secret.'
+        );
+    }
 }
