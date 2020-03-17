@@ -100,7 +100,7 @@ public class TOTP {
         return byteArray;
     }
 
-    public static String convertStringToBase32String(String text) {
+    public static String convertUTF8toBase32(String text) {
         String hex = EncodingUtil.convertToHex(Blob.valueOf(text));
 		String[] parts = hex.split('');
 
@@ -117,15 +117,15 @@ public class TOTP {
         return convertMap5BitsToListInteger(map5bit,binaryListString);
     }
 
-    public static List<String> convertIntegerToBinaryString(Integer int, Integer places) {
+    public static List<String> convertIntegerToBinaryString(Integer n, Integer places) {
         List<String> binaryNumber = new List<String>();
 
-        while (int > 1) {
-            binaryNumber.add(String.valueOf(Math.mod(int, 2)));
-            int = int /2;
+        while (n > 1) {
+            binaryNumber.add(String.valueOf(Math.mod(n, 2)));
+            n = n /2;
         }
 
-        binaryNumber.add(String.valueOf(int));
+        binaryNumber.add(String.valueOf(n));
 
         binaryNumber = reverseBinaryString(binaryNumber, places);
 
@@ -159,35 +159,36 @@ public class TOTP {
         return retVal;
     }
 
-    public static Map<Integer,List<String>> convert4BitTo5Bit(Map<Integer,List<String>> fourBit) {
-        Map<Integer,List<String>> map5bit = new Map<Integer,List<String>>();
+    public static Map<Integer,List<String>> convert4BitTo5Bit(Map<Integer, List<String>> fourBitMap) {
+        Map<Integer, List<String>> map5bit = new Map<Integer, List<String>>();
 
-        Integer sizeMap4Bit = Map4Bit.keySet().size();
+        Integer sizeMap4Bit = fourBitMap.keySet().size();
 
         Integer count5 = 0;
         Integer count4 = 0;
 
         while (count4 < sizeMap4Bit) {
 
-            List<String> aux1 = fourBit.get(count4);
+            List<String> aux1 = fourBitMap.get(count4);
 
             List<String> aux2 = new List<String> {'0','0','0','0'};
             List<String> aux3 = new List<String> {'0','0','0','0'};
             List<String> aux4 = new List<String> {'0','0','0','0'};
             List<String> aux5 = new List<String> {'0','0','0','0'};
 
-            if(count4 + 1 < fourBit.size()) {
-                aux2 = fourBit.get(count4 + 1);
+            if (count4 + 1 < fourBitMap.size()) {
+                aux2 = fourBitMap.get(count4 + 1);
             }
-            if(count4 + 2 < fourBit.size()) {
-                aux3 = fourBit.get(count4 + 2);
+            if (count4 + 2 < fourBitMap.size()) {
+                aux3 = fourBitMap.get(count4 + 2);
             }
-            if(count4 + 3 < fourBit.size()) {
-                aux4 = fourBit.get(count4 + 3);
+            if (count4 + 3 < fourBitMap.size()) {
+                aux4 = fourBitMap.get(count4 + 3);
             }
-            if(count4 + 4 < fourBit.size()) {
-                aux5 = fourBit.get(count4 + 4);
+            if (count4 + 4 < fourBitMap.size()) {
+                aux5 = fourBitMap.get(count4 + 4);
             }
+
             List<String> aux6 = new List<String>();
             aux6.addAll(aux1);
             aux6.add(aux2[0]);
@@ -221,10 +222,10 @@ public class TOTP {
         return map5bit;
     }
 
-    public static String convertMap5BitsToListInteger(Map<Integer,List<String>> map5Bit, Map<Integer,List<String>> map4Bit) {
+    public static String convertMap5BitsToListInteger(Map<Integer, List<String>> map5Bit, Map<Integer, List<String>> map4Bit) {
         Integer sizeMap4Bit = Map4Bit.keySet().size();
-        Integer finalQuantum = math.mod(sizeMap4Bit*4, 40);
-        Integer stringSize = (sizeMap4Bit*4 / 40) * 8;
+        Integer finalQuantum = math.mod(sizeMap4Bit * 4, 40);
+        Integer stringSize = (sizeMap4Bit * 4 / 40) * 8;
         String pad = '';
         Integer countChars = 0;
         String base32String = '';
@@ -232,13 +233,13 @@ public class TOTP {
         if (finalQuantum == 8) {
             pad = '======';
             stringSize += 2;
-        } else if(finalQuantum == 16) {
+        } else if (finalQuantum == 16) {
             pad = '====';
             stringSize += 4;
-        } else if(finalQuantum == 24) {
+        } else if (finalQuantum == 24) {
             pad = '===';
             stringSize += 5;
-        } else if(finalQuantum == 32) {
+        } else if (finalQuantum == 32) {
             pad = '=';
             stringSize += 7;
         }
@@ -424,7 +425,7 @@ public class TOTP {
                 this.type_x,
                 this.issuer,
                 this.accountName,
-                ConvertStringToBase32String(this.key),
+                convertUTF8toBase32(this.key),
                 this.algorithm,
                 this.period+'',
                 this.digits+''
