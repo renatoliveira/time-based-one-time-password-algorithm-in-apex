@@ -2,7 +2,7 @@
 String key = 'JBSWY3DPEHPK3PXP';
 
 // and the current time (in miliseconds, and as string)
-String currentTime =  System.now().getTime()+'';
+Long currentTime =  System.now().getTime();
 
 // Using the algorithm HMAC-SHA1
 String algo = 'hmacSha1';
